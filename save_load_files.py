@@ -45,7 +45,7 @@ class SaveLoadFiles:
             print(f"txt file loaded: {file_path}")
             states = np.loadtxt(file_path,delimiter=",",skiprows=1)
             states = np.asarray(states,dtype=float)
-            return  states, states[1,8]
+            return  states, states[1,8], file_path
         else:
             print("No file selected")
             return None

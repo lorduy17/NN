@@ -138,7 +138,7 @@ class OptionLoad:
             context["mesh"] = loader.load_stl()
 
         elif choice == "states":
-            context["states"], context["dt"] = loader.load_states()
+            context["states"], context["dt"] = loader.load_states(), context["file_name"]
 
         else:
             raise ValueError("Invalid load option")

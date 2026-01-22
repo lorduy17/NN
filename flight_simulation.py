@@ -124,7 +124,7 @@ class FlightSimulation:
         anim = FuncAnimation(fig, update, frames=len(self.states), interval=self.interval, blit=False)
 
         
-        plt.grid(False)
+        plt.grid(True)
         plt.show()
 
         #%%
