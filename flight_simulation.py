@@ -53,10 +53,10 @@ class FlightSimulation:
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.set_xlim(-1,1)
-        ax.set_ylim(-1,1)
-        ax.set_zlim(-1,1)
-        ax.set_axis_off
+        # ax.set_xlim(-1,1)
+        # ax.set_ylim(-1,1)
+        # ax.set_zlim(-1,1)
+        ax.set_axis_off()
 
         try:
             fig.patch.set_facecolor(self.background_color)
@@ -124,7 +124,6 @@ class FlightSimulation:
         anim = FuncAnimation(fig, update, frames=len(self.states), interval=self.interval, blit=False)
 
         
-        plt.grid(True)
+        
         plt.show()
 
-        #%%
