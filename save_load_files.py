@@ -4,16 +4,13 @@ from datetime import datetime
 import trimesh
 from tkinter import filedialog
 import os
+import time
 
 
 class SaveLoadFiles:
     def __init__(self):
         self.mesh = None
-        pass
-
-
-    
-        
+           
     def load_stl(self):
         route = filedialog.askopenfilename(
             title="Select STL file",
@@ -27,10 +24,10 @@ class SaveLoadFiles:
         # Load STL file
         try:
             self.mesh = trimesh.load(route)
-
             self.mesh.apply_translation(-self.mesh.centroid)
             self.mesh.apply_scale(1/np.max(self.mesh.extents))
             return self.mesh.apply_scale(2)
+            
         
         except Exception as e:
             print(f"Error loading STL file: {e}")
@@ -45,9 +42,11 @@ class SaveLoadFiles:
             print(f"txt file loaded: {file_path}")
             states = np.loadtxt(file_path,delimiter=",",skiprows=1)
             states = np.asarray(states,dtype=float)
+            time.sleep(3)
             return  states, states[1,8], file_path
         else:
             print("No file selected")
+            time.sleep(3)
             return None
 
     @staticmethod 
@@ -73,15 +72,16 @@ class SaveLoadFiles:
             os.makedirs('issues', exist_ok=True)
                 
             timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-            filename = f'states_simulated/simulation_data_{timestamp}.txt'
+            filename_states = f'states_simulated/simulation_data_{timestamp}.txt'
             
             np.savetxt(
-                filename,
+                filename_states,
                 states_to_save,
                 header="u,v,w,phi,theta,psi,alpha,beta,gamma,time",
                 delimiter=","
             )
-            print(f"States saved as: {filename}")
+            print(f"States saved as: {filename_states}")
+            time.sleep(3)
         else:
             print("No states to save")
             return

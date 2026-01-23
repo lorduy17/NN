@@ -14,7 +14,6 @@ class FlightSimulation:
         self.mesh = mesh
         self.dt = dt
         self.interval = interval
-        
         self.vertices = mesh.vertices
         self.faces = mesh.faces
 
@@ -53,9 +52,9 @@ class FlightSimulation:
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        # ax.set_xlim(-1,1)
-        # ax.set_ylim(-1,1)
-        # ax.set_zlim(-1,1)
+        ax.set_xlim(-1,1)
+        ax.set_ylim(-1,1)
+        ax.set_zlim(-1,1)
         ax.set_axis_off()
 
         try:
@@ -100,8 +99,8 @@ class FlightSimulation:
             alpha,beta = self.states[num,6:8]
             v_rel = -np.asarray([u,v,w],dtype=float)
             wind_vector = R@v_rel
+
             # Wind vector in nose
-        
             center = nose_rotated
             wind_quiver[0].remove()
             wind_quiver[0] = ax.quiver(
@@ -123,7 +122,5 @@ class FlightSimulation:
             
         anim = FuncAnimation(fig, update, frames=len(self.states), interval=self.interval, blit=False)
 
-        
-        
         plt.show()
 

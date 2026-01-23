@@ -124,33 +124,39 @@ class FS:
         except KeyError as e:
             if e:
                 time.sleep(3)
-                raise ValueError(f"Missing required parameter for flight simulation: {e}")
-            
+                raise ValueError(f"Missing required parameter for flight simulation: {e}")       
 class OptionLoad:
-    def execute(self, context):
 
-        print("Select load option:")
-        choice = input("Load (stl/states): ")
+    def __init__(self):
+        self.commands_load = {
+            "stl":self._loadstl,
+            "states":self._loadstates,
+            "ac_pars":self._ac_pars
+        }
 
-        loader = slf()
+    def execute_subcom(self,context,sub_com):
+        if sub_com not in self.commands_load:
+            raise ValueError(f"Invalid subcommand: {sub_com}")
+        try:
+            self.commands_load[sub_com](context)
+        except (ValueError,IndexError) as e:
+            raise ValueError("")
 
-        if choice == "stl":
-            context["mesh"] = loader.load_stl()
+    def _loadstl(self,context):
+        context["mesh"] = slf().load_stl()
 
-        elif choice == "states":
-            context["states"], context["dt"], context["file_name"] = loader.load_states()
-
-        else:
-            raise ValueError("Invalid load option")
+    def _loadstates(self,context):
+        context["states"], context["dt"], context["file_name"] = slf().load_states()
+    
+    def _ac_pars(self,context):
+        None  
 class FlightSimulationMenu:
 
     def __init__(self):
         self.commands = {
             "bg_color":self._bg_color,
-            "interval":self._interval,
-            "show":self._show
+            "interval":self._interval
         }
-
     def _bg_color(self,context,args):
         if not args:
             raise ValueError("Background color invalid")
@@ -158,7 +164,6 @@ class FlightSimulationMenu:
         print(f"Background color set to: {args[0]}")
         temp = input("Press Enter or any key to exit")
         cs()
-
     def _interval(self,context,args):
        if not args:
               raise ValueError("Interval value is required")
@@ -174,7 +179,6 @@ class FlightSimulationMenu:
        print(f"Interval set to {interval} ms")
        temp = input("Press Enter or any key to exit")
        cs()
-    
     def _show(self,context):
         actual_config = f"""
         . Fligth simulations settings
@@ -184,7 +188,6 @@ class FlightSimulationMenu:
         print(actual_config)
         temp = input("Press Enter or any key to exit")
         cs()
-        
     def execute_subcom(self,context,sub_com,args):
         if sub_com not in self.commands:
             raise ValueError(f"Invalid subcommand: {sub_com}")
@@ -212,15 +215,12 @@ class FlightSimulationMenu:
         print(actual_config)
         temp = input("Press Enter or any key to exit")
         cs()
-
-        
 class notes:
     def __init__(self,):
         self.commands_notes = {
             "dates_sim":self._dates_sim,
             "flight_sim":self._flight_sim,
             "load_files":self._load_files,
-            "show":self._show
         }
     def _dates_sim(self,):
         dates_sim = """
@@ -261,7 +261,6 @@ Set start and end times deflection in seconds.
         print(dates_sim)
         temp = input("Press Enter or any key to exit")
         cs()
-
     def _flight_sim(self,):
         note = """
 - Ensure that STL files are loaded before running the flight simulation.
@@ -284,7 +283,6 @@ Set start and end times deflection in seconds.
         print(note)
         temp = input("Press Enter or any key to exit")
         cs()
-
     def _load_files(self,):
         note = """           
 - Load stl:
@@ -309,15 +307,13 @@ Set start and end times deflection in seconds.
         print(note)
         temp = input("Press Enter or any key to exit")
         cs()     
-
     def execute_subcom(self,sub_com):
         if sub_com not in self.commands_notes:
             raise ValueError(f"Invalid subcommand: {sub_com}")
         try:
             self.commands_notes[sub_com]()
         except (ValueError,IndexError) as e:
-            raise ValueError(f"Invalid arguments for: {sub_com}")
-    
+            raise ValueError(f"Invalid arguments for: {sub_com}")    
     def execute(self,context):
         notes = """
         Use: notes.commad
@@ -329,7 +325,6 @@ Set start and end times deflection in seconds.
         print(notes)
         time.sleep(5)
         cs()
-        
    
 class Factory:
 

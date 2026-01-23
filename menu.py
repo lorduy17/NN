@@ -40,7 +40,7 @@ class Menu:
                 if isinstance(result,tuple):
                     if args == []:
                         command,sub_com = result
-                        command.execute_subcom(sub_com)
+                        command.execute_subcom(context,sub_com)
                     else:
                         command,sub_com = result
                         command.execute_subcom(context, sub_com, args)
