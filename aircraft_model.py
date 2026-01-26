@@ -85,42 +85,42 @@ class AircraftModel:
             [-2.098,0,99.92]
         ])
 
-        s = 260 # m2
-        mac = 6.6 # m
-        x_apt1 = 0
-        y_apt1 = 7.94
-        z_apt1 = 1.9
-        x_apt2 = 0
-        y_apt2 = -7.94
-        z_apt2 = 1.9
+        s = 260 # m2 ac_params[""]["s"]
+        mac = 6.6 # m ac_params[""]
+        x_apt1 = 0 # ac_params[""]
+        y_apt1 = 7.94 # ac_params[""]
+        z_apt1 = 1.9 # ac_params[""]
+        x_apt2 = 0 # ac_params[""]
+        y_apt2 = -7.94 # ac_params[""]
+        z_apt2 = 1.9 # ac_params[""]
 
         # STEP 3
         ## Nondimensional Aero Forces coefficientes in Fs
         alpha0 = -11.5/180*np.pi # rad
-        n = 5.5
+        n = 5.5 # ac_params[""] what is n, check biblography
 
         if alpha <= 14.5/180*np.pi:  
             cl_wb = n*(alpha-alpha0)
         else:
-            a1 = -155.2
-            a2 = 609.2
-            a3 = -768.5
-            a0 = 15.212
+            a1 = -155.2 # check biblography
+            a2 = 609.2  # check biblography
+            a3 = -768.5 # check biblography
+            a0 = 15.212 # check biblography
             cl_wb = a0 + a1*alpha + a2*alpha**2 + a3*alpha**3
 
         # Tail
-        s_t = 64 # m2
-        l_t = 24.8 #m
-        deda = 0.25
-        epsilon = deda*(alpha -alpha0)
-        alpha_t = alpha-epsilon+u2+1.3*x5*l_t/Va
-        cl_t = s_t/s*3.1*alpha_t
+        s_t = 64 # m2 # ac_params[""]
+        l_t = 24.8 #m # ac_params[""]
+        deda = 0.25 # ac_params[""]
+        epsilon = deda*(alpha -alpha0) # ac_params[""]
+        alpha_t = alpha-epsilon+u2+1.3*x5*l_t/Va # ac_params[""]
+        cl_t = s_t/s*3.1*alpha_t # ac_params[""]
         
 
         # Forces
         cl = cl_wb+cl_t
-        c_d = 0.13+0.0061*(n*alpha+0.645)**2
-        c_y = -1.6*beta+0.24*u3
+        c_d = 0.13+0.0061*(n*alpha+0.645)**2 # ac_params[""]
+        c_y = -1.6*beta+0.24*u3 # ac_params[""]
         
 
         ## Aerodynamic Force in Fb
@@ -148,17 +148,17 @@ class AircraftModel:
             -1.4*beta,
             -0.59-(3.1*s_t*l_t)/(s*mac)*(alpha-epsilon),
             (1-alpha*180/(np.pi*15))*beta
-        ])
+        ]) # ac_params[""] check referece
         cm_x = mac/Va*np.array([
             [-11,0,5],
             [0,-4.03*s_t*l_t**2/(s*mac**2),0],
             [1.7,0,-11.5]
-        ])
+        ]) # ac_params[""] check referece
         cm_u = np.array([
             [-0.6,0,0.22],
             [0,-3.1*(s_t*l_t/(s*mac)),0],
             [0,0,-0.63]
-        ])
+        ]) # ac_params[""] check referece 
 
 
         cm_ac = n_bar +cm_x@(angle_rates)+cm_u@[u1,u2,u3]
