@@ -129,7 +129,7 @@ class Simulate:
             
 
             # Euler explicit integration
-            x_dot_current = amodel.xdot(x_current,U)
+            x_dot_current = amodel.xdot(x_current,U,self.model)
             x_next = x_current + x_dot_current*dt
             
 

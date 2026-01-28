@@ -73,7 +73,7 @@ class DatesForSim:
 
         if not temp or temp:
             simulator = sim(
-                amodel,
+                context["ac_params"],
                 context["x0"],
                 context["u0"],
                 context["time"],
@@ -149,7 +149,7 @@ class OptionLoad:
         context["states"], context["dt"], context["file_name"] = slf().load_states()
     
     def _ac_pars(self,context):
-        None  
+        context["ac_params"] = slf().load_parameters()
 class FlightSimulationMenu:
 
     def __init__(self):

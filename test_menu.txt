@@ -16,9 +16,52 @@ dates_sim
 180,0.1
 
 
+ac_params = {
+["m"] : 120e3, # kg
+["inertia_matrix"]  : np.asarray([
+    [40.07,0,-2.098],
+    [0,64,0],
+    [-2.098,0,99.92]
+],dtype :float),
+["s"]  : 260, # Wing surface area, m2
+["mac"]  : 6.6, # Mean aerodynamic cord, m
+["x_apt1"]  : 0, # Engine 1. X coord , m
+["y_apt1"]  : 7.94, # Engine 1. Y coord, m
+["z_apt1"]  : 1.9, # Engine 1. Z coord, m
+["x_apt2"]  : 0,# Engine 2. X coord , m
+["y_apt2"]  : -7.9, # Engine 2. Y coord, m
+["z_apt2"]  : 1.9, # Engine 2. Z coord, m
+["alpha0"]  : -11.5/180*np.pi, # Alpha when CL=0, rad
+["n"]  : 5.5, #  slope 1/rad
+["s_t"]  : 64, # m2 #  [""]
+["l_t"]  : 24.8, #m # ac_params[""]
+}
 
-flight_sim
+ac_params = {
+    ["m"]:mass, kg
+    ["inertia_matrix"]: np.asarray([
+        [Ix    ,0  ,-Ixz],
+        [0     ,Iy ,0   ],
+        [-Ixz  ,0  ,Iz  ],
+    ],dtype=float)
+    ["s"]: Wing surface area, m2
+    ["mac"]: Mean aerodynamic cord, m
+    ["x_apt1"]: Engine 1. X coord , m
+    ["y_apt1"]: Engine 1. Y coord, m
+    ["z_apt1"]: Engine 1. Z coord, m
+    ["x_apt2"]: Engine 2. X coord , m
+    ["y_apt2"]: # Engine 2. Y coord, m
+    ["z_apt2"]: Engine 2. Z coord, m
+    ["alpha0"]: Alpha when CL = 0, rad
+    ["n"] : slope 1/rad
+    ["s_t"] : surface area tail, m2 [""]
+    ["l_t"] : longitud between wing and tail ac, m
+}
 
 
-
-
+# parameter, value, unit
+# name,value,unit
+m,120000,kg
+s,260,m^2
+alpha0,-0.2007,rad
+inertia_matrix,40.07 0 -2.098; 0 64 0; -2.098 0 99.92,m**2

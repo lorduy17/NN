@@ -32,11 +32,10 @@ class SaveLoadFiles:
         except Exception as e:
             print(f"Error loading STL file: {e}")
             return None
-        
     def load_states(self):
         file_path = filedialog.askopenfilename(
             title="Select simulation states file",
-            filetypes=(("STL files","*.txt"),("All files","*.*"))
+            filetypes=((".txt files","*.txt"),("All files","*.*"))
         )
         if file_path:
             print(f"txt file loaded: {file_path}")
@@ -48,7 +47,118 @@ class SaveLoadFiles:
             print("No file selected")
             time.sleep(3)
             return None
+    def load_parameters(self):
+        file_path = filedialog.askopenfilename(
+            title="Select simulation parameters file",
+            filetypes=((".txt files","*.txt"),("All files","*.*"))
+        )
+        if file_path:
+            print(f"txt file loaded: {file_path}")
+            print("Loading parameters...")
+            ac_params = {}
+            with open(file_path, 'r') as file:
+                for line in file:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    try:
+                        key, value, unit = line.split(',') 
+                    except ValueError:
+                        raise ValueError(f"Invalid format at line: {line}")
+                    
+                    if key == "inertia_matrix": # special case for inertia matrix
+                        rows = value.strip().split(';')
+                        matrix = [list(map(float,r.rsplit())) for r in rows]
+                        value = np.array(matrix,dtype=float)
+                    else:
+                        value = float(value)
 
+                    ac_params[key] = { # save parameters
+                        "value": value,
+                        "unit": unit.strip()
+                    }
+            time.sleep(3)
+            return  ac_params
+        else:
+            print("No file selected")
+            time.sleep(3)
+            return self._default_parameters()  
+    def _default_parameters(self):
+        return {
+        "m": {
+            "value": 120e3,
+            "unit": "kg"
+    },
+
+        "inertia_matrix": {
+            "value": np.asarray([
+                [40.07, 0, -2.098],
+                [0, 64, 0],
+                [-2.098, 0, 99.92]
+            ], dtype=float),
+            "unit": "kg*m^2"
+        },
+
+        "s": {
+            "value": 260,
+            "unit": "m^2"
+        },
+
+        "mac": {
+            "value": 6.6,
+            "unit": "m"
+        },
+
+        "x_apt1": {
+            "value": 0,
+            "unit": "m"
+        },
+
+        "y_apt1": {
+            "value": 7.94,
+            "unit": "m"
+        },
+
+        "z_apt1": {
+            "value": 1.9,
+            "unit": "m"
+        },
+
+        "x_apt2": {
+            "value": 0,
+            "unit": "m"
+        },
+
+        "y_apt2": {
+            "value": -7.9,
+            "unit": "m"
+        },
+
+        "z_apt2": {
+            "value": 1.9,
+            "unit": "m"
+        },
+
+        "alpha0": {
+            "value": -11.5 / 180 * np.pi,
+            "unit": "rad"
+        },
+
+        "n": {
+            "value": 5.5,
+            "unit": "1/rad"
+        },
+
+        "s_t": {
+            "value": 64,
+            "unit": "m^2"
+        },
+
+        "l_t": {
+            "value": 24.8,
+            "unit": "m"
+        }
+    } 
     @staticmethod 
     def save_simulation(states):
         """

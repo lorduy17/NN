@@ -1,0 +1,15 @@
+# param,value,unit
+m,85000,kg
+inertia_matrix,32.5 0 -1.4; 0 51.8 0; -1.4 0 78.2,m**2
+s,210,m**2
+mac,5.8,m
+x_apt1,0.3,m
+y_apt1,6.8,m
+z_apt1,2.1,m
+x_apt2,0.3,m
+y_apt2,-6.8,m
+z_apt2,2.1,m
+alpha0,-0.17453292519943295,rad
+n,4.9,1/rad
+s_t,48,m^2
+l_t,21.0,m
