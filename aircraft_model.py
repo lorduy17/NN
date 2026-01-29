@@ -32,6 +32,35 @@ class AircraftModel:
 
         where body speed, m/s: x1,x2,x3  and angle rates, rad/s: x4,x5,x6
 
+        ac_params: Aircraft parameters.
+
+
+        ac_params = {
+            "m": {"value": float(), "unit": "kg"},
+            "inertia_matrix": {"value": np.asarray(3x3 matrix, dtype=float), "unit": "m**2"},
+            "s": {"value": float(), "unit": "m**2"},
+            "mac": {"value": float(), "unit": "m"},
+            "x_apt1": {"value": float(), "unit": "m"},
+            "y_apt1": {"value": float(), "unit": "m"},
+            "z_apt1": {"value": float(), "unit": "m"},
+            "x_apt2": {"value": float(), "unit": "m"},
+            "y_apt2": {"value": float(), "unit": "m"},
+            "z_apt2": {"value": float(), "unit": "m"},
+            "alpha0": {"value": float(), "unit": "rad"},
+            "n": {"value": float(), "unit": "1/rad"},
+            "s_t": {"value": float(), "unit": "m2"},
+            "l_t": {"value": float(), "unit": "m"}
+        }
+        
+        m: mass
+        s: surface wing
+        mac: mean aerodynamic chord
+        (x,y,z)_apt(1,2): distance since c.g to engine poss
+        alpha0: alpha value when CL = 0
+        n : cl-alpha curve slope
+        s_t: surface tail
+        l_t: distance between wing and tail ac's
+        
         Output:
         xdot = [accel_body,accel_angles,euler_rates_rate]
 

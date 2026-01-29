@@ -303,6 +303,53 @@ Set start and end times deflection in seconds.
     phi,theta,psi: rads.
     alpha,beta,gamma: rads.
     time: seconds.
+
+- Load aircraft parameters format:
+    The aircraft parameters file must be a .txt with the following format:
+    (If the format is incorrect. The A/C parameters set as default defined
+     by bilbiography reference)
+
+        # name,value,unit
+        m,float,kg
+        inertia_matrix,row1;row2;row3,unit
+        s,float.0,m2
+        mac,float,m
+        x_apt1,float,m
+        y_apt1,float,m
+        z_apt1,float,m
+        x_apt2,float,m
+        y_apt2,float,m
+        z_apt2,float,m
+        alpha0,float,rad
+        n,float,1/rad
+        s_t,float,m2
+        l_t,float,m
+
+        where:
+          m: mass
+          s: surface wing
+          mac: mean aerodynamic chord
+          (x,y,z)_apt(1,2): distance since c.g to engine poss
+          alpha0: alpha value when CL = 0
+          n : cl-alpha curve slope
+          s_t: surface tail
+          l_t: distance between wing and tail ac's
+
+        ~ Not is important the order of params but HAVE TO THE SAME NAME.
+        ~ For inertia_matrix the values of rows must be separated by space.
+           e.x:
+          
+              inertia_matrix = ([
+                [Ix  ,0    ,-Ixz ],
+                [0   ,Iy   ,0    ],
+                [-Ixz,  0  ,Iz   ]
+              ],dytype=float)
+
+              in the .txt:
+                m...
+                inertia_matrix,Ix 0 -Ixz;0 Iy 0;-Ixz,0,Iz,m**2
+    
+
 """ 
         print(note)
         temp = input("Press Enter or any key to exit")
