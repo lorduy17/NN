@@ -1,7 +1,7 @@
-# param,value,unit
+param,value,unit
 m,85000,kg
-inertia_matrix,32.5 0 -1.4; 0 51.8 0; -1.4 0 78.2,m**2
-s,210,m**2
+inertia_matrix,32.5 0 -1.4; 0 51.8 0; -1.4 0 78.2,m^2
+s,210,m^2
 mac,5.8,m
 x_apt1,0.3,m
 y_apt1,6.8,m

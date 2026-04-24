@@ -1,25 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from aircraft_model import AircraftModel as amodel
-
+from core.aircraft_model import AircraftModel
 class Simulate:
-
-    def __init__(self,model,x,u,time,dt,da=None,da_start=None,da_end=None,eg=None):
-        self.model = model
-        self.x = x
-        self.u = u
-        self.time = time
-        self.dt = dt
-        self.da = da
-        self.da_start = da_start
-        self.da_end = da_end
-        self.eg = eg
-
-    
-
-    def simulate(self,da=None,da_start=None,da_end=None,eg=None,show=None):
+    def __init__(self,ac_params,params):
+        self.model = AircraftModel(ac_params)
+        self.pars = params
+    def simulate(self,):
         """
-
         The function simnulate the behavior of the A/C (aircraft) with
         cases like if the pilot deflect aleron, shut off a any engine
 
@@ -80,16 +66,18 @@ class Simulate:
             gamma = theta - alpha
             return np.asarray([alpha,beta,gamma,time_current],dtype=float)
 
-        X = self.x
-        U = self.u
-        time = self.time
-        dt = self.dt
-        da = self.da
-        da_sta = self.da_start
-        da_end = self.da_end
-        eg = self.eg
+        X = self.pars.x
+        U = self.pars.u
+        time = self.pars.time
+        dt = self.pars.dt
+        da = self.pars.da
+        da_sta = self.pars.da_start
+        da_end = self.pars.da_end
+        eg = self.pars.eg
+        show = self.pars.show
         iter_counter = 0
         counter_time = 0
+        
 
 
         deg2rad = np.pi/180
@@ -129,7 +117,7 @@ class Simulate:
             
 
             # Euler explicit integration
-            x_dot_current = amodel.xdot(x_current,U,self.model)
+            x_dot_current = self.model.xdot(x_current, U)
             x_next = x_current + x_dot_current*dt
             
 
@@ -165,27 +153,4 @@ class Simulate:
     
         states = np.asarray(states,dtype=float)
         time_vector = np.asarray(time_vector,dtype=float)
-        
-        ## Plotter
-        fig, axs = plt.subplots(9, 1, figsize=(10, 15), sharex=True)
-        labels_y = ["u, m/s", "v, m/s", "w, m/s", "p, rad/s", "q, rad/s", "r, rad/s", "phi, rad", "theta, rad", "psi, rad"]
-        
-        for i in range(9):
-            axs[i].plot(time_vector, states[:,i], label=labels_y[i],)
-            axs[i].legend()
-            axs[i].grid(True)
-            if i == 8:  # Last subplot
-                axs[i].set_xlabel('Time (s)')
-        
-        plt.tight_layout()
-        plt.show(block=False)
-
-        states = np.hstack((states,states_abg))
-      
-
-
         return states
-
-    
-#%%
-    

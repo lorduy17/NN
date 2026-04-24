@@ -1,6 +1,10 @@
-
+#
 issues/
-
+#
+.venv/
+#
 states_simulated/
-
+#
+__pycache__/
+#
 text_menu.txt

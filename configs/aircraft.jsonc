@@ -1,0 +1,21 @@
+{
+    "m":120e3, //mass, kg
+    "inertia_matrix":[
+        [40.07,0,2.098],
+        [0, 64, 0],
+        [2.098, 0, 99.92]
+    ], // per mass, m²
+    "mac":6.6, // mean aerodynamic chord, m
+    "s":260, // Wing surface, m²
+    "s_t":64, // Tail surface, m²
+    "l_t":24.8, // distance between aerodynamics centers, m
+    "n": 5.5, // slope Cl vs alpha, 1/rad
+    "alpha_0":0.2, // rad
+    // Engine possition respect c.g
+    "x_apt1":0, // m
+    "y_apt1":7.94,// m
+    "z_apt1":1.9,// m
+    "x_apt2":0,// m
+    "y_apt2":-7.94,// m
+    "z_apt2":1.9// m
+}
