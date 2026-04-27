@@ -2,8 +2,11 @@ import numpy as np
 from dataclasses import dataclass
 @dataclass
 class SimulationParameters:
-    x: np.ndarray
-    u:np.ndarray
+    """
+    Simulation parameters
+    """
+    X: np.ndarray
+    U:np.ndarray
     time:float
     dt:float
     da:float

@@ -15,7 +15,7 @@ class AircraftParameters:
     x_apt2: float
     y_apt2: float
     z_apt2: float
-    alpha0: float
+    alpha_0: float
     n: float
     s_t: float
     l_t: float

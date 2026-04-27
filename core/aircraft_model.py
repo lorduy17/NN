@@ -7,6 +7,7 @@ class AircraftModel:
     def xdot(self, state_var, control_var):
         """
         Inputs:
+        -------
         control_vars: Variables of control, like:
 
         control_var = [u1,u2,u3,u4,u5]
@@ -37,12 +38,13 @@ class AircraftModel:
         s: surface wing
         mac: mean aerodynamic chord
         (x,y,z)_apt(1,2): distance since c.g to engine poss
-        alpha0: alpha value when CL = 0
+        alpha_0: alpha value when CL = 0
         n : cl-alpha curve slope
         s_t: surface tail
         l_t: distance between wing and tail ac's
         
         Output:
+        -------
         xdot = [accel_body,accel_angles,euler_rates_rate]
 
         accel_body = [u_dot,v_dot,w_dot] m/s**2
@@ -84,7 +86,7 @@ class AircraftModel:
         # STEP 3
         ## Nondimensional Aero Forces coefficientes in Fs
         if alpha <= 14.5/180*np.pi:  
-            cl_wb = self.ac_params.n*(alpha-self.ac_params.alpha0) # 
+            cl_wb = self.ac_params.n*(alpha-self.ac_params.alpha_0) # 
         else:  ## Stall region
             a1 = -155.2 
             a2 = 609.2  
@@ -94,7 +96,7 @@ class AircraftModel:
 
         # Tail
         deda = 0.25 
-        epsilon = deda*(alpha -self.ac_params.alpha0)
+        epsilon = deda*(alpha -self.ac_params.alpha_0)
         alpha_t = alpha-epsilon+u2+1.3*x5*self.ac_params.l_t/Va
         cl_t = self.ac_params.s_t/self.ac_params.s*3.1*alpha_t 
         

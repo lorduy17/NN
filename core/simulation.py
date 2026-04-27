@@ -20,6 +20,7 @@ class Simulate:
             eg: shutoff the engine. 1: shut off engine 1 , 2: shut off engine 2.
 
         Output:
+        -------
             states: Matrix with A/C in each dt.
             states = size: [time/dt,14] 
             
@@ -66,8 +67,8 @@ class Simulate:
             gamma = theta - alpha
             return np.asarray([alpha,beta,gamma,time_current],dtype=float)
 
-        X = self.pars.x
-        U = self.pars.u
+        X = self.pars.X
+        U = self.pars.X
         time = self.pars.time
         dt = self.pars.dt
         da = self.pars.da
@@ -134,7 +135,7 @@ class Simulate:
             counter_time += dt
             iter_counter += 1
             
-
+            show = True if show == 1 else False
             if show is True: # Show simulate progress
                 progress = counter_time/time
                 if progress < 1:

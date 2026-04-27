@@ -5,6 +5,8 @@ issues/
 #
 states_simulated/
 #
-__pycache__/
+**__pycache__/
 #
 text_menu.txt
+
+references/

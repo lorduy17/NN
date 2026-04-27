@@ -7,6 +7,6 @@
     "da_start":0,
     "da_end":0,
     "eg":0,
-    "show":0,
+    "show":1,
     "units_sys":"SI" // HAVE TO USE METRIC
 }

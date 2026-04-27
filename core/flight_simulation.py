@@ -3,53 +3,18 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib.animation import FuncAnimation
 from operations import Operations as ops
-import matplotlib.colors as mcolors
 import time
 
 class FlightSimulation:
-
-
-    def __init__(self,states,mesh,dt,interval,background_color=None):
-        self.states = states
+    def __init__(self,mesh,dt,interval):
         self.mesh = mesh
         self.dt = dt
         self.interval = interval
         self.vertices = mesh.vertices
         self.faces = mesh.faces
-
-        self.background_color = self._validate_color(background_color)
-
-    def _validate_color(self,color):
-        if color is None:
-            return "white"
-        
-        if not color in mcolors.cnames.keys():
-            if not self._hex_color(color):
-                raise ValueError("Invalid color format. Use named colors or hex format (e.g., #RRGGBB).")
- 
-        else:
-            return color
-    
-    def _hex_color(self,color):
-        if not isinstance(color,str):
-            return False
-        if not color.startswith("#"):
-            return False
-        
-        hex_part = color[1:]
-
-        if len(hex_part) not in [3,6,8]:
-            return False
-        
-        try:
-            int(hex_part,16)
-            return True
-        except ValueError:
-            return False
-        
-
+    def _update_states(self,states):
+        self.states = states
     def animation(self):
-
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         ax.set_xlim(-1,1)
@@ -57,13 +22,6 @@ class FlightSimulation:
         ax.set_zlim(-1,1)
         ax.set_axis_off()
 
-        try:
-            fig.patch.set_facecolor(self.background_color)
-            ax.set_facecolor(self.background_color)
-        except:
-            ValueError("Invalid background color. Using default.")
-            time.sleep(5)
-    
         vert0 = self.vertices
         faces = self.faces
 
