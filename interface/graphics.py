@@ -28,7 +28,8 @@ class Interface:
             for j in range(3):
                 axs[i].plot(time,vector[i][:,j],label=vector_labels[i][j])
             axs[i].legend()
+            axs[i].grid()
             
         axs[-1].set_xlabel("Time, s")
         plt.tight_layout()
-        plt.show()
+        plt.show(block=False)

@@ -95,9 +95,9 @@ class Simulate:
         while counter_time <= time:
             U = U_initial.copy()
             # If the user wanna case simulate with aleron deflection 
-            if da is not None and da != 0.0:
+            if da != 0.0:
                 if da_sta <= counter_time <= da_end:
-                    U[0] += da*deg2rad # rad
+                    U[0] += da # rad
             # If the user wanna case simulate with engine fail 
             if eg == 1:
                 U[3] = 0 # shut off engine 1

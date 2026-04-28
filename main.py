@@ -7,7 +7,7 @@ from interface.graphics import Interface
 
 
 
-data_ac = LoadFiles._read_jsonc("configs/aircraft.jsonc")
+data_ac = LoadFiles._read_jsonc("configs/aircrafts/b737.jsonc")
 ac_params = LoadFiles.ac_parameters(data_ac)
 
 

@@ -58,6 +58,15 @@ class LoadFiles:
     @staticmethod
     def _load_mesh(path):
         mesh = pv.read(path)
+        center = mesh.center
+        bounds = mesh.bounds
+        scale = max(
+            bounds[1] - bounds[0],
+            bounds[3] - bounds[2],
+            bounds[5] - bounds[4]
+        )
+        mesh.points -= center
+        mesh.points /= scale
         return mesh
     @staticmethod
     def _read_jsonc(path):
@@ -65,3 +74,4 @@ class LoadFiles:
         with open(path,'r') as f:
             data = jstyleson.load(f)
         return data
+
