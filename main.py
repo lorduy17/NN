@@ -1,17 +1,24 @@
 from service.loader import LoadFiles
+from service.save import Save
 from core.simulation import Simulate
 from service.loader import LoadFiles
-from core.simulation import Simulate
+from interface.flight_simulation import FlightSimulation
+from interface.graphics import Interface
 
-# Cargar parámetros del avión
+
+
 data_ac = LoadFiles._read_jsonc("configs/aircraft.jsonc")
 ac_params = LoadFiles.ac_parameters(data_ac)
 
-# Cargar parámetros de simulación
+
 data_sim = LoadFiles._read_jsonc("configs/simulation.jsonc")
 sim_params = LoadFiles.simulation_parameters(data_sim)
 
-# Crear simulación y ejecutar
-sim = Simulate(ac_params, sim_params)  # ← guardarlo en una variable
-states = sim.simulate()                # ← llamarlo desde la variable
-print(states)
+
+sim = Simulate(ac_params, sim_params)  
+mesh = LoadFiles._load_mesh('data/meshes/ultimo2.stl')
+states = sim.simulate()     
+flight_sim = FlightSimulation(mesh,sim_params.dt)
+flight_sim.animation(states)
+Interface.plotter(states)
+

@@ -5,21 +5,12 @@ from domain.simulation_config import SimulationParameters
 import numpy as np
 import jstyleson
 import pandas as pd
+import pyvista  as pv
 class LoadFiles:
     """
     Load files
     """
-    def __init__(self,states,mesh):
-        self.states = states
-        self.mesh = mesh
-
     @staticmethod
-    def _read_jsonc(path):
-        # Read parameters
-        with open(path,'r') as f:
-            data = jstyleson.load(f)
-        return data
-
     def ac_parameters(data):
         supported_units = ["SI"]
         # Check units system
@@ -40,6 +31,7 @@ class LoadFiles:
                     values[i] = data[i]
             return AircraftParameters(**values)
 
+    @staticmethod
     def simulation_parameters(data):
         supported_units = ["SI"]
         # Check units system
@@ -55,12 +47,21 @@ class LoadFiles:
                 else:
                     values[i] = data[i]
             return SimulationParameters(**values)
-    def _load_states(self,path):
+    @staticmethod
+    def _load_states(path):
         """
         Load states from csv file
         """
         df = pd.read_csv(path)
         states = df.values
         return states
-    def _load_mesh(self,path):
-        None
+    @staticmethod
+    def _load_mesh(path):
+        mesh = pv.read(path)
+        return mesh
+    @staticmethod
+    def _read_jsonc(path):
+        # Read parameters
+        with open(path,'r') as f:
+            data = jstyleson.load(f)
+        return data

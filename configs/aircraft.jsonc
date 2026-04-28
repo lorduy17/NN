@@ -10,7 +10,7 @@
     "s_t":64, // Tail surface, m²
     "l_t":24.8, // distance between aerodynamics centers, m
     "n": 5.5, // slope Cl vs alpha, 1/rad
-    "alpha_0":0.2, // rad
+    "alpha_0":-0.2, // rad
     // Engine possition respect c.g
     "x_apt1":0, // m
     "y_apt1":7.94,// m
