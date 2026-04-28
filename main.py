@@ -15,9 +15,12 @@ data_sim = LoadFiles._read_jsonc("configs/simulation.jsonc")
 sim_params = LoadFiles.simulation_parameters(data_sim)
 
 
+
+
 sim = Simulate(ac_params, sim_params)  
 mesh = LoadFiles._load_mesh('data/meshes/ultimo2.stl')
-states = sim.simulate()     
+states = sim.simulate()  
+Save.s_sim(states)  
 flight_sim = FlightSimulation(mesh,sim_params.dt)
 flight_sim.animation(states)
 Interface.plotter(states)
