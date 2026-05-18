@@ -53,13 +53,35 @@ class AircraftModel:
         """
         ### deg2rad
         deg2rad = np.pi/180
+
+        # ----------- Extract variables and parameters -----------
+        # Mass,  inertia
+        m = self.ac_params.m
+        inertia_matrix = self.ac_params.inertia_matrix
+        # Geometric parameters
+        s = self.ac_params.s
+        mac = self.ac_params.mac
+        ## Tail parameters
+        s_t = self.ac_params.s_t
+        l_t = self.ac_params.l_t
+        ## Engine parameters
+        x_apt1 = self.ac_params.x_apt1
+        y_apt1 = self.ac_params.y_apt1
+        z_apt1 = self.ac_params.z_apt1
+        x_apt2 = self.ac_params.x_apt2
+        y_apt2 = self.ac_params.y_apt2
+        z_apt2 = self.ac_params.z_apt2
+        # Aerodynamic parameters
+        alpha_0 = self.ac_params.alpha_0
+        n = self.ac_params.n
+        
         # STEP 1
         # Control limits
         for i in range(len(control_var)):
             if i < 3:
                 control_var[i] = np.clip(control_var[i],-25*deg2rad,25*deg2rad)
             else:
-                control_var[i] = np.clip(control_var[i],0,1)
+                control_var[i] = np.clip(control_var[i],0.5*deg2rad,10*deg2rad)
         u1,u2,u3,u4,u5 = control_var
         # STEP 2
         ## Variables intermedias
@@ -77,16 +99,16 @@ class AircraftModel:
         beta = np.arcsin(np.clip(x2/Va, -1, 1))
         rho = 1.225
         Q = 0.5*rho*Va**2
-        g = 9.80665 # m/s2
+        g = 9.81 # m/s2
         
 
         # Aircraft parameters, calcs from self.ac_params
-        innertia_body = self.ac_params.m*self.ac_params.inertia_matrix
+        innertia_body = m* inertia_matrix
 
         # STEP 3
         ## Nondimensional Aero Forces coefficientes in Fs
         if alpha <= 14.5/180*np.pi:  
-            cl_wb = self.ac_params.n*(alpha-self.ac_params.alpha_0) # 
+            cl_wb =  n*(alpha- alpha_0) # 
         else:  ## Stall region
             a1 = -155.2 
             a2 = 609.2  
@@ -96,13 +118,13 @@ class AircraftModel:
 
         # Tail
         deda = 0.25 
-        epsilon = deda*(alpha -self.ac_params.alpha_0)
-        alpha_t = alpha-epsilon+u2+1.3*x5*self.ac_params.l_t/Va
-        cl_t = self.ac_params.s_t/self.ac_params.s*3.1*alpha_t 
+        epsilon = deda*(alpha - alpha_0)
+        alpha_t = alpha-epsilon+u2+1.3*x5* l_t/Va
+        cl_t =  s_t/ s*3.1*alpha_t 
         
         # Forces
         cl = cl_wb+cl_t
-        c_d = 0.13+0.0061*(self.ac_params.n*alpha+0.645)**2 
+        c_d = 0.13+0.07*( n*alpha-0.45)**2 
         c_y = -1.6*beta+0.24*u3
         
         ## Aerodynamic Force in Fb
@@ -113,63 +135,63 @@ class AircraftModel:
                         [0,0,1]])
 
         # STEP 4
-        forces_s = Q*self.ac_params.s*np.array(non_dim_forces)
+        forces_s = Q* s*np.array(non_dim_forces)
         c_bs = np.array([
             [np.cos(alpha),0,-np.sin(alpha)],
             [0,1,0],
             [np.sin(alpha),0,np.cos(alpha)]
         ])
-        forces_a = c_bs@forces_s
+        forces_a = np.dot(c_bs, forces_s)
 
         # STEP 5
         ## Nondimensional Aero Moment Coefficient about AC in Fb
         # Defube parametters for calc cm
         n_bar = np.array([
             -1.4*beta,
-            -0.59-(3.1*self.ac_params.s_t*self.ac_params.l_t)/(self.ac_params.s*self.ac_params.mac)*(alpha-epsilon),
+            -0.59-(3.1* s_t* l_t)/( s*mac)*(alpha-epsilon),
             (1-alpha*180/(np.pi*15))*beta
         ])
-        cm_x = self.ac_params.mac/Va*np.array([
+        cm_x = mac/Va*np.array([
             [-11,0,5],
-            [0,-4.03*self.ac_params.s_t*self.ac_params.l_t**2/(self.ac_params.s*self.ac_params.mac**2),0],
+            [0,(-4.03*( s_t* l_t**2)/( s*mac**2)),0],
             [1.7,0,-11.5]
         ])
         cm_u = np.array([
             [-0.6,0,0.22],
-            [0,-3.1*(self.ac_params.s_t*self.ac_params.l_t/(self.ac_params.s*self.ac_params.mac)),0],
+            [0,-3.1*( s_t* l_t/(s*mac)),0],
             [0,0,-0.63]
         ])
 
 
         cm_ac = n_bar +cm_x@(angle_rates)+cm_u@[u1,u2,u3]
-        moments_ac = self.ac_params.mac*cm_ac*Q*self.ac_params.s
+        moments_ac = mac*cm_ac*Q* s
         
         # STEP 7
         ## Aero moment about cg in Fb
         """
         Define parammetters (r_cg,r_ac) for calculate mmoment cg in Fb
         """
-        r_cg = np.array([0.23*self.ac_params.mac,0,0.1*self.ac_params.mac])
-        r_ac = np.array([0.12*self.ac_params.mac,0,0])
+        r_cg = np.array([0.23*mac,0,0.1*mac])
+        r_ac = np.array([0.12*mac,0,0])
         moments_cg = moments_ac+np.cross(forces_a,(r_cg-r_ac))
 
-        # STEP 8
+        # STEP 8S
         ## Propulsion effects
-        f1 = min(u4*self.ac_params.m*g, 0.175*self.ac_params.m*g) 
-        f2 = min(u5*self.ac_params.m*g, 0.175*self.ac_params.m*g)
+        f1 = (u4*m*g) 
+        f2 = (u5*m*g)
 
         """Define parammetters (u_bar1,u_bar2) for the propulsion effects"""
         f_e = f1+f2
         u_bar1 = np.array([
-            self.ac_params.x_apt1,
-            self.ac_params.y_apt1,
-            self.ac_params.z_apt1
+             x_apt1,
+             y_apt1,
+             z_apt1
     ])
         u_bar1 = u_bar1 - r_cg
         u_bar2 = np.array([
-            self.ac_params.x_apt2,
-            self.ac_params.y_apt2,
-            self.ac_params.z_apt2
+             x_apt2,
+             y_apt2,
+             z_apt2
         ])
         u_bar2 = u_bar2 - r_cg
 
@@ -177,7 +199,7 @@ class AircraftModel:
 
         # STEP 9
         ## Gravity effects
-        fg_bar = self.ac_params.m*np.array([
+        fg_bar = m*np.array([
             -g*np.sin(x8),
             g*np.cos(x8)*np.sin(x7),
             g*np.cos(x8)*np.cos(x7)
@@ -187,7 +209,7 @@ class AircraftModel:
         forces = forces_a + fg_bar +[f_e,0,0]
         moments =  m_ecg + moments_cg
 
-        accel_body = forces/self.ac_params.m-np.cross(angle_rates,body_speed)
+        accel_body = forces/m-np.cross(angle_rates,body_speed)
 
         innertia_body_inv = np.linalg.inv(innertia_body)
         accel_angles = innertia_body_inv@(moments-np.cross(angle_rates,innertia_body@angle_rates))

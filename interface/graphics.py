@@ -32,4 +32,4 @@ class Interface:
             
         axs[-1].set_xlabel("Time, s")
         plt.tight_layout()
-        plt.show(block=False)
+        plt.show()

@@ -13,5 +13,6 @@ class SimulationParameters:
     da_start:float
     da_end:float
     eg:float
+    eg_time:float
     show:float
     

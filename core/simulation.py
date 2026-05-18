@@ -73,6 +73,7 @@ class Simulate:
         da = self.pars.da
         da_sta = self.pars.da_start
         da_end = self.pars.da_end
+        eg_time = self.pars.eg_time
         eg = self.pars.eg
         show = self.pars.show
         iter_counter = 0
@@ -92,18 +93,24 @@ class Simulate:
         x_current = X.copy()
         U_initial = U.copy()
         iter_fail = None ## If simulation tend to infinite -> Show warning in the terminal
+        
         while counter_time <= time:
             U = U_initial.copy()
             # If the user wanna case simulate with aleron deflection 
             if da != 0.0:
                 if da_sta <= counter_time <= da_end:
                     U[0] += da # rad
-            # If the user wanna case simulate with engine fail 
-            if eg == 1:
-                U[3] = 0 # shut off engine 1
-            elif eg == 2:
-                U[4] = 0 # shut off engine 2
-            # Euler explicit integration
+            # If the user wanna case simulate with engine fail Eg
+            if eg_time != 0:
+                if counter_time >= eg_time:
+                    if eg == 1:
+                        U[3] = 0 # shut off engine 1
+                    elif eg == 2:
+                        U[4] = 0 # swut off engine 2
+                    elif eg == 3:
+                        U[3] = 0
+                        U[4] = 0
+                # Euler explicit integration
             x_dot_current = self.model.xdot(x_current, U)
             x_next = x_current + x_dot_current*dt
             # Conditions for active warning
@@ -117,12 +124,12 @@ class Simulate:
             x_current = x_next
             counter_time += dt
             iter_counter += 1
-            if show is True: # Show simulate progress
+            if show == 1: # Show simulate progress
                 progress = counter_time/time
                 if progress < 1:
                     if progress * 100 % 5 == 0:
                         print(
-                            f"{counter_time/time*100:.f2}%      Iteration N°{iter_counter}"
+                            f"{counter_time/time*100:.2f}%      Iteration N°{iter_counter}"
                         )
             if iter_fail is not None: # Print state if will not converge
                 if iter_counter%2500 == 0:
@@ -131,6 +138,8 @@ class Simulate:
                     print("Simulation can not converge for")
                     print(f"Iteration:{iter_counter}","\twith\t",f"time: {round(counter_time,0)}s")
                     print(50*"*")
+            
+            
         #
         states = np.asarray(states,dtype=float)
         time_vector = np.asarray(time_vector,dtype=float).reshape(-1,1)

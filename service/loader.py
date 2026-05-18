@@ -39,7 +39,7 @@ class LoadFiles:
         if unit_system not in supported_units:
             raise ValueError(f'{unit_system} NOT IS SUPPORTED')
         else:
-            fields = ["X","U","time","dt","da","da_start","da_end","eg","show"]
+            fields = ["X","U","time","dt","da","da_start","da_end","eg_time","eg","show"]
             values = {}
             for i in fields:
                 if i == "X" or i == "U":
