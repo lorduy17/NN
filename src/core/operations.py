@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Operations:
-
+    
     def __init__(self):
         pass
     
@@ -50,3 +50,34 @@ class Operations:
 
         R = R_beta @ R_alpha
         return R
+
+    @staticmethod
+    def c_wb(alpha,beta):
+        """
+        Calculate the body yo eart rotation matrix from aerodynamic angles.
+        """
+        cos = lambda x : np.cos(x)
+        sin = lambda x : np.sin(x)
+        R = np.array([
+            [ cos(alpha) * cos(beta), -cos(alpha) * sin(beta), -sin(alpha)],
+            [         sin(beta),          cos(beta),    0.0],
+            [ sin(alpha) * cos(beta), -sin(alpha) * sin(beta),  cos(alpha)]
+        ], dtype=float)
+        return R
+    @staticmethod
+    def c_be(phi,theta,psi):
+        """
+        Calculate the body to earth rotation matrix from Euler angles.
+        """
+        a_11 = np.cos(theta)*np.cos(psi)
+        a_12 = np.cos(theta)*np.sin(psi)
+        a_13 = -np.sin(theta)
+        a_21 = np.sin(phi)*np.sin(theta)*np.cos(psi) - np.cos(phi)*np.sin(psi)
+        a_22 = np.sin(phi)*np.sin(theta)*np.sin(psi) + np.cos(phi)*np.cos(psi)
+        a_23 = np.sin(phi)*np.cos(theta)
+        a_31 = np.cos(phi)*np.sin(theta)*np.cos(psi) + np.sin(phi)*np.sin(psi)
+        a_32 = np.cos(phi)*np.sin(theta)*np.sin(psi) - np.sin(phi)*np.cos(psi)
+        a_33 = np.cos(phi)*np.cos(theta)
+        return np.asarray([[a_11,a_12,a_13],
+                           [a_21,a_22,a_23],
+                           [a_31,a_32,a_33]],dtype=float)

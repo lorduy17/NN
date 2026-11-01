@@ -1,9 +1,13 @@
 import numpy as np
+from src.domain.aircraft_parameter import AircraftParameters
 
 class AircraftModel:
     def __init__(self, ac_params):
         self.ac_params = ac_params
-
+    """
+    Creo que hacer una función que calcule todos los factores y se llame solo una vez antes de cada simulación es mejora, para evitar que el modelo solo tenga que calcular el vector de estado.
+    """
+    
     def xdot(self, state_var, control_var):
         """
         Inputs:
@@ -65,12 +69,8 @@ class AircraftModel:
         s_t = self.ac_params.s_t
         l_t = self.ac_params.l_t
         ## Engine parameters
-        x_apt1 = self.ac_params.x_apt1
-        y_apt1 = self.ac_params.y_apt1
-        z_apt1 = self.ac_params.z_apt1
-        x_apt2 = self.ac_params.x_apt2
-        y_apt2 = self.ac_params.y_apt2
-        z_apt2 = self.ac_params.z_apt2
+        eg1 = self.eg1
+        eg2 = self.eg2
         # Aerodynamic parameters
         alpha_0 = self.ac_params.alpha_0
         n = self.ac_params.n
@@ -95,8 +95,11 @@ class AircraftModel:
         if Va < 1e-6:
             Va = 1e-6
 
+        ### Aerodynamic angles
         alpha = np.arctan2(x3,x1)
         beta = np.arcsin(np.clip(x2/Va, -1, 1))
+
+        # Density (CAN BE PUT IN FUNCTION TO H) and dynamic pressure
         rho = 1.225
         Q = 0.5*rho*Va**2
         g = 9.81 # m/s2
@@ -107,6 +110,11 @@ class AircraftModel:
 
         # STEP 3
         ## Nondimensional Aero Forces coefficientes in Fs
+
+        ### Wing-body
+        """
+        NEED A CLASS TO DEFINE THE PARAMETERS OF SLOPE OF CL-ALPHA CURVE
+        """
         if alpha <= 14.5/180*np.pi:  
             cl_wb =  n*(alpha- alpha_0) # 
         else:  ## Stall region
@@ -117,15 +125,21 @@ class AircraftModel:
             cl_wb = a0 + a1*alpha + a2*alpha**2 + a3*alpha**3
 
         # Tail
+        """
+        FOR CONVECIONAL CONFIGURATION,
+        *** ASUMPTION: Tail profile is symetric ***
+
+        CL_t = a_t*(1-dEpsilon_dalpha)*alpha+a_t*(i_t-e_0) + dCL_dE*delta_elevator
+        """
         deda = 0.25 
         epsilon = deda*(alpha - alpha_0)
         alpha_t = alpha-epsilon+u2+1.3*x5* l_t/Va
         cl_t =  s_t/ s*3.1*alpha_t 
         
         # Forces
-        cl = cl_wb+cl_t
-        c_d = 0.13+0.07*( n*alpha-0.45)**2 
-        c_y = -1.6*beta+0.24*u3
+        cl = cl_wb+cl_t # cl_wb + area_ratio*cl_t
+        c_d = 0.13+0.07*( n*alpha-0.45)**2  # Cd = Cdo + k*cl**2
+        c_y = -1.6*beta+0.24*u3 # CHECK RAYMER 
         
         ## Aerodynamic Force in Fb
         non_dim_forces = [-c_d,c_y,-cl]

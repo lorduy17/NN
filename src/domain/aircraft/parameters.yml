@@ -1,0 +1,79 @@
+# Aircraft parameters.
+aircraft:
+  name: "Cessna 172" #
+  mass: 1043.0  # kg
+  cd0 : 0.010
+  diameter_fus: 1.3 # m
+  width_fus:  # Fuselage Width, m
+  vol_fus:  # Fuselage Volume, m³
+  h_cg: 0.295 # C.G. position
+
+inertia_mass: # Going assume the products as 0.
+  ix: 1285.6
+  iy: 1824.9
+  iz: 2667.0
+
+wing:
+  mac: 1.49 # Mean Aerodynamic Chord, m
+  AR:  7.32 # Aspect Ratio
+  s: 16.2 # Surface, m²
+  z_wf:   # Vertical distance wing-fuselage, m
+  taper_ratio: 0.67
+  sweep: 0.0  # deg
+  incidence: 1.5  # deg
+  twist: 0.0  # deg
+  dihedral: 1.73  # deg
+  alpha_0: -0.035 # AoA when Lift Coefficient is equal a zero. 1/rad
+  n: 5.7  # Alpha Slope
+  e: 0.8  # Oswald Eficiency
+  h_ac: 0.25 # Wing a.c. position
+
+  
+  
+  # -- CL curve
+  CL_max: 1.55
+  CL_0:  0.20
+  # Define a stall region with a polynomial of 4 grade.
+  a1: 0.0939
+  a2: -24.512
+  a3: 86.358
+  a4: -84.093
+
+tail:  
+  horizontal:
+    AR: 3.5 # Aspect Ratio
+    s: 3.4  # Surface, m²
+    l: 4.7  # Distance between a.c
+    taper_ratio: 0.7
+    incidence: -1.0 # [deg]
+    twist: 0.0  # [deg]
+    alpha_0: 0.0  # AoA when Lift Coefficient = 0, [degs]
+    n: 3.65   # Alpha Slope, [1/rad]
+    epsilon_0: 0.0  # angle of downwash when alpha = 0
+    de_da:  0.42  # Epsilon derivate respect alpha angle
+    eta: 0.9  # Efeciency
+
+  vertical:
+    s: 1.5  # Surface area, [m²]
+    l: 4.4  # Horizontal distance since a.c to c.g. [m]
+    z: 0.7  # Vertical distance since a.c to fuselage line [m]
+    n: 0.0365 # 1/deg
+  
+
+engine:
+  # Engine positions
+  eg1: [-1.9,0.0,0.1] # x,y,z [m]
+  eg2: null # x,y,z [m]
+  
+surface_control:
+  Cl_n_a : 0.004  # Aleron slope [1/deg] (Roll)
+  Cn_n_a: -0.00038  # Aleron slope [1/deg] (Yaw)
+  CL_n_e : 0.0075 # Elevator slope [1/deg] (Pitch)
+  Cm_n_e: -0.0196 # Elevator slope [1/deg] (Pitch)
+  Cn_n_r: -0.011  # Rudder slope [1/deg] (Yaw)
+  CY_n_r: 0.0033  # Rudder slope [1/deg] (Side Force)
+
+aerodynamic_derivates:
+  C_mq: −12.4  # Pitch Damping
+  C_lp: −0.47  # Roll Damaping
+  C_nr: −0.0937  # Yaw Damping
