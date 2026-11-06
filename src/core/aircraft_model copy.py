@@ -4,9 +4,8 @@ import numpy as np
 
 class AircraftModel:
 
-    def __init__(self):
-        self.yml_path
-        self.ac = AircraftParameters(self.yml_path)
+    def __init__(self,ac_params: AircraftParameters):
+        self.ac = ac_params
 
     def xdot(self,x,u):
         """
@@ -107,7 +106,7 @@ class AircraftModel:
 
         # ---- Aero Forces
         non_dimesion_forces = np.asarray([-CD,CY,-CL],dtype=float)
-        aero_forces = self.s*Q*non_dimesion_forces
+        aero_forces = self.ac.s*Q*non_dimesion_forces
 
         # ---- Non Dimension Moments
         # ------ Cl
@@ -153,19 +152,30 @@ class AircraftModel:
                          np.cross(self.ac.eg2,np.asarray([f2,0,0],dtype=float)))
 
         # -- Body Frame
-        aero_forces = op.c_wb*aero_forces
-        aero_moments = op.c_wb*aero_moments
+        c_wb = op.c_wb(alpha,beta)
+        aero_forces = np.dot(c_wb*aero_forces)
+        aero_moments = np.dot(c_wb*aero_moments)
 
         forces = aero_forces+engine_force+gravity_force
         moments = aero_moments+engine_moment
-        
 
-    
 
-        
+        w_cross = np.asarray([
+            [0,-x6,x5],
+            [x5,0,-x4],
+            [-x5,x4,0]],dtype=float)
+        I = self.ac.inertia_matrix
+        w = angle_rates
+        accel_body = forces/self.ac.m-np.dot(w_cross,body_speed)
+        I_dot_w = np.dot(I,w)
+        accel_ang = np.dot(self.ac.inv_inertia_matrix,moments-I_dot_w)
 
-        
-#%%
+        H_inv = np.array([[1, sin(x7)*np.tan(x8), cos(x7)*np.tan(x8)],
+                        [0, cos(x7),            -sin(x7)],
+                        [0, sin(x7)/cos(x8),     cos(x7)/cos(x8)]])
+        euler_rates = np.dot(H_inv,w)
+        return np.hstack((accel_body, accel_ang, euler_rates))
+        #%%
 
 # ---- INTEACTIVE TESTING
 

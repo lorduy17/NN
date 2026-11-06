@@ -56,6 +56,7 @@ class AircraftModel:
         euler_rates_rate = [phi_dot,theta_dot,psi_dot] rad/s
         """
         ### deg2rad
+        
         deg2rad = np.pi/180
 
         # ----------- Extract variables and parameters -----------

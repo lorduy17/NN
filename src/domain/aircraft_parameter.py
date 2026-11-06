@@ -12,7 +12,7 @@ class AircraftParameters:
     name : str
     m: float # Mass
     diameter_fus: float
-    width_fus: float # Fuselage Width, m
+    w_f: float # Fuselage Width, m
     vol_fus: float # Fuselage Volume, m³
     cd0: float
     h_cg : float
@@ -32,6 +32,7 @@ class AircraftParameters:
     incidence_wing: float
     twist_wing: float
     dihedral_angle: float
+    z_wf: float
     b: float = field(init=False)
     h_ac : float
     # ---- Aerodynamic
@@ -73,17 +74,19 @@ class AircraftParameters:
     side_wash_factor: float = field(init=False)
 
     # -- Surface Control
-    Cl_n_a :float   # Aleron slope [1/deg]
-    Cn_n_a: float   # Aleron slope [1/deg]
-    CL_n_e : float  # Elavator [1/deg]
-    Cm_n_e: float   # Elevator [1/deg] 
-    Cn_n_r: float   # Rudder [1/deg]
+
+    Cl_n_a :float   # Aleron slope [1/rad]
+    Cn_n_a: float   # Aleron slope [1/rad]
+    CL_n_e : float  # Elavator [1/rad]
+    Cm_n_e: float   # Elevator [1/rad] 
+    CY_n_r: float   # Rudder [1/rad]
+    Cn_n_r: float   # Rudder [1/rad]
 
 
     # -- Aerodynamic Derivates
-    C_mq: float # Pitch Damping
-    C_lp: float # Roll Damaping
-    C_nr: float # Yaw Damping
+    Cm_q: float # Pitch Damping
+    Cl_p: float # Roll Damaping
+    Cn_r: float # Yaw Damping
 
    
     # -- Engine
@@ -114,7 +117,6 @@ class AircraftParameters:
     Cl_beta: float = field(init=False)
     Cn_beta: float = field(init=False)
     
-#%%
     def __post_init__(self):
         """
         Calculates all parameters can be calculated from the geometry of the aircraft.
@@ -139,9 +141,11 @@ class AircraftParameters:
             [0,self.iyy,0],
             [0,0,self.izz]],
             dtype=float)*self.m
+        self.inv_inertia_matrix = np.linalg.inv(self.inertia_matrix)
 
-        # -- Calculate wing span
+        # -- Calculate wing span and static margin
         self.b = np.sqrt(self.AR*self.s)
+        self.static_margin = self.h_ac-self.h_cg
   
         # -- Calculate horizontal tail
         self.V_H_t = self.s_t * self.l_t/(  self.s * self.mac)
@@ -171,7 +175,7 @@ class AircraftParameters:
         factor_lam = (2 * (1 + 2 * lam)) / (3 * (1 + lam))
         cl_beta_gamma = - (self.n * gamma_rad / 4.0) * factor_lam
         # ------ Wing + Fuselage
-        cl_beta_wf = -1.2 * (np.sqrt(self.AR) * self.z_wf * (self.diameter_fus + self.width_fus)) / (self.b**2)
+        cl_beta_wf = -1.2 * (np.sqrt(self.AR) * self.z_wf * (self.diameter_fus + self.w_f)) / (self.b**2)
         # ---- 
         self.Cl_beta = cl_beta_tail+cl_beta_gamma+cl_beta_wf
         # ---- Yaw
@@ -191,8 +195,7 @@ class AircraftParameters:
 
         self.cn_beta_wing_factor = term1-term2*term3
         # -- Stability
-        self.static_margin = self.h_ac-self.h_cg
-        self.Cm_0 = self.h_ac*self.CL_0-self.eta_t*self.V_H_t*self.n_t*(self.incidence_t-self.self.epsilon_0)
+        self.Cm_0 = self.h_ac*self.CL_0-self.eta_t*self.V_H_t*self.n_t*(self.incidence_t-self.epsilon_0)
 
     @classmethod
     def from_yml(cls,filepath: str) -> "AircraftParameters":
@@ -208,7 +211,7 @@ class AircraftParameters:
             m=data['aircraft']['mass'],
             cd0 = data['aircraft']['cd0'],
             diameter_fus = data['aircraft']['diameter_fus'],
-            width_fus = data['aircraft']['width_fus'],
+            w_f = data['aircraft']['width_fus'],
             vol_fus = data['aircraft']['vol_fus'],
             h_cg = data['aircraft']['h_cg'],
             # Inertia
@@ -272,8 +275,8 @@ class AircraftParameters:
             Cn_n_r = data["surface_control"]["Cn_n_r"],
 
             # Aerodynamic Derivates.
-            C_mq = data['aerodynamic_derivates']['C_mq'],
-            C_lp = data['aerodynamic_derivates']['C_lp'],
-            C_nr = data['aerodynamic_derivates']['C_nr']
+            Cm_q = float(data['aerodynamic_derivates']['C_mq']),
+            Cl_p = float(data['aerodynamic_derivates']['C_lp']),
+            Cn_r = float(data['aerodynamic_derivates']['C_nr'])
         )
     
